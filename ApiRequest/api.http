@@ -1,0 +1,30 @@
+
+@host = http://localhost:8000
+
+GET {{host}}/users  http/1.1
+
+###
+
+
+
+ 
+ ###
+
+ POST {{host}}/users
+Content-Type: application/json
+
+{
+    "username": "James",
+    "password": "James",
+    "firstname": "Cole",
+    "lastname": "James",
+    "user_type": "applicant",
+    "email": "JamesFan@gmail.com",
+    "company_name":"fanda",
+    "company_industry":"food delivery",
+    "company_website":"www.fanda.com",
+    "company_address":"no 8 angola close lagos Nigeria",
+    "company_contact_email":"career@fanda.com",
+    "company_contact_phone_number":"0804562233737",
+    "company_logo_url":"http://james.com"
+}
