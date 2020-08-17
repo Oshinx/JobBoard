@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const companycontroller = require('../../controllers/companycontroller');
 
 
 router.get(('/'), (req,res) =>{
@@ -7,22 +8,16 @@ router.get(('/'), (req,res) =>{
 })
 
 
-
-router.post(('/'), (req,res) =>{
-    res.send('post');
-})
+// create company
+router.post(('/'), companycontroller.create_company)
 
 
-
-router.put(('/'), (req,res) =>{
-    res.send('put');
-})
+// update company company
+router.put(('/'), companycontroller.edit_company)
 
 
-
-router.delete(('/'), (req,res) =>{
-    res.send('delete');
-})
+//delete company
+router.delete(('/'), companycontroller.delete_company)
 
 
 module.exports = router;

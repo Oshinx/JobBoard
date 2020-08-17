@@ -49,3 +49,7 @@ const jobSchema =  new mongoose.Schema({
      }
      }
 )
+
+let Job = mongoose.model('jobs',jobSchema);
+
+exports.Job = Job;

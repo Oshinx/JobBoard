@@ -1,4 +1,4 @@
-const { User } = require("../model/user");
+/* const { User } = require("../model/user");
 const { Company } = require("../model/company");
 const _ = require('lodash')
 const { v4: uuidv4 } = require("uuid");
@@ -18,7 +18,7 @@ const { v4: uuidv4 } = require("uuid");
       type: String,
     },
  */
-
+/** 
 module.exports.registration = async  (req, res) => {
   let { username, password, firstname, lastname, user_type, email } = req.body;
 
@@ -32,14 +32,7 @@ module.exports.registration = async  (req, res) => {
     company_logo_url,
   } = req.body;
 
-  let newUser = {
-    user_id: uuidv4(),
-    username: username,
-    password: password,
-    name: `${firstname}  ${lastname}`,
-    user_type: user_type,
-    email: email,
-  };
+  
 
 
   let newCompany = {
@@ -65,15 +58,7 @@ module.exports.registration = async  (req, res) => {
 
   if (!newCompany.company_address) {
     // normal user
-    let user = new User(newUser);
-
-    try {
-      let result = await user.save();
-      response.result = _.pick(result, ['user_id', 'username', 'name','user_type','email']);
-      return res.status(201).json(response.result);
-    } catch (e) {
-      response.error = true;
-    }
+    
   } else {
 
     let user = new User(newUser);
@@ -95,3 +80,4 @@ module.exports.registration = async  (req, res) => {
     }
   }
 };
+ */
