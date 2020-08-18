@@ -6,7 +6,6 @@ module.exports.get_company = async (req, res) => {};
 
 module.exports.create_company = async (req, res) => {
   let {
-    id,
     company_name,
     company_industry,
     company_website,
@@ -14,6 +13,7 @@ module.exports.create_company = async (req, res) => {
     company_contact_email,
     company_contact_phone_number,
     company_logo_url,
+    user_id
   } = req.body;
 
   let response = {
@@ -26,6 +26,10 @@ module.exports.create_company = async (req, res) => {
     { company_name: company_name },
   ]);
   if (companyFound.length > 0) {
+    res.status(400).json({
+      message: "company already  exist",
+    });
+  } else {
     let newCompany = {
       company_id: uuidv4(),
       company_name: company_name,
@@ -35,24 +39,24 @@ module.exports.create_company = async (req, res) => {
       company_contact_email: company_contact_email,
       company_contact_phone_number: company_contact_phone_number,
       company_logo_url: company_logo_url,
-      user_id: id,
+      user_id
     };
 
     let company = new Company(newCompany);
 
     try {
       let companyResult = await company.save();
-      console.log(companyResult);
-      response.result = _.pick(result, [
-        "company_id",
-        "company_name",
-        "company_industry",
-        "company_website",
-        "company_address",
-        "company_contact_email",
-        "company_contact_phone_number",
-        "company_logo_url",
-        "user_id",
+
+      response.result = _.pick(companyResult, [
+        'company_id',
+        'company_name',
+        'company_industry',
+        'company_website',
+        'company_address',
+        'company_contact_email',
+        'company_contact_phone_number',
+        'company_logo_url',
+        'user_id',
       ]);
       console.log(response.result);
 
@@ -61,16 +65,12 @@ module.exports.create_company = async (req, res) => {
       response.error = true;
       res.status(500).json(response);
     }
-  } else {
-    res.status(400).json({
-      message: "user does not exist",
-    });
   }
 };
 
 module.exports.edit_company = async (req, res) => {
   let {
-    id,
+    company_id,
     company_name,
     company_industry,
     company_website,
@@ -78,65 +78,58 @@ module.exports.edit_company = async (req, res) => {
     company_contact_email,
     company_contact_phone_number,
     company_logo_url,
+    user_id,
   } = req.body;
 
-  try {
-    if (!id) {
-      //handles error
-      return res.status(400).json({
-        message: "id cannot be empty",
-      });
-    } else {
-      let response = {
-        error: false,
-        result: "",
-      };
+  if (!company_id) {
+    //handles error
+    return res.status(400).json({
+      message: "id cannot be empty",
+    });
+  } else {
+    let response = {
+      error: false,
+      result: "",
+    };
 
-      l;
-      let companyFound = await Company.find({ company_id: id });
+    let companyFound = await Company.find()
+                                    .and([{ company_id: company_id },{ user_id: user_id }]);
 
-      if (companyFound.length > 0) {
-        if (companyFound.company_name === company_name) {
-          res.status(400).json({
-            message: "company already exist",
-          });
-        } else {
-          let result = await Company.update(
-            { company_id: id },
-            {
-              $set: {
-                company_name:company_name,
-                company_industry:company_industry,
-                company_website:company_website,
-                company_address:company_address,
-                company_contact_email:company_contact_email,
-                company_contact_phone_number: company_contact_phone_number,
-                company_logo_url:company_logo_url,
-              },
-            }
-          );
-          response.result = {
-            message: 'successfully updated'
+    if (companyFound.length > 0) {
+      try {
+        let result = await Company.updateOne(
+          { company_id: company_id },
+          {
+            $set: {
+              company_name: company_name,
+              company_industry: company_industry,
+              company_website: company_website,
+              company_address: company_address,
+              company_contact_email: company_contact_email,
+              company_contact_phone_number: company_contact_phone_number,
+              company_logo_url: company_logo_url,
+              user_id
+            },
           }
-          res.status(200).json(response);
-        }
-      } else {
-        res.status(404).json({
-          message: "user does not exist",
+        );
+        response.result = {
+          message: "successfully updated",
+        };
+        res.status(200).json(response);
+      } catch (e) {
+        res.status(500).json({
+          message: "server error",
         });
       }
+    } else {
+      res.status(404).json({
+        message: "company does not exist",
+      });
     }
-  } catch (e) {
-    res.status(500).json({
-      message: "server error",
-    });
-    console.log(e);
   }
 };
 
-
 module.exports.delete_company = async (req, res) => {
-
   try {
     let { id } = req.params;
 
@@ -149,13 +142,13 @@ module.exports.delete_company = async (req, res) => {
 
       if (companyFound.length > 0) {
         let result = await Company.deleteOne({ company_id: id });
-        console.log(result);
+     
         res.status(200).json({
           message: "Delete was successful",
         });
       } else {
         res.status(404).json({
-          message: " account does not exist",
+          message: " company does not exist",
         });
       }
     }
@@ -163,7 +156,6 @@ module.exports.delete_company = async (req, res) => {
     res.status(500).json({
       message: "server error",
     });
-    console.log(e);
+ 
   }
-   
 };

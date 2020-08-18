@@ -17,7 +17,7 @@ router.put(('/'), companycontroller.edit_company)
 
 
 //delete company
-router.delete(('/'), companycontroller.delete_company)
+router.delete(('/:id'), companycontroller.delete_company)
 
 
 module.exports = router;
